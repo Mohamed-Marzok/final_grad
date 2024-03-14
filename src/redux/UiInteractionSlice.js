@@ -7,6 +7,7 @@ const UiInteractionSlice = createSlice({
         showLoginForm: false,
         isSidebarOpen: true,
         showAddCourseForm: false,
+        showAddLectureForm: false,
         showPaginationButtons: false,
     },
     reducers: {
@@ -19,12 +20,16 @@ const UiInteractionSlice = createSlice({
         toggleShowAddCourseForm: (state) =>{
             state.showAddCourseForm = !state.showAddCourseForm;
         },
+        toggleShowAddLectureForm: (state) =>{
+            state.showAddLectureForm = !state.showAddLectureForm;
+        },
         togglePaginationButtons: (state)=>{
             state.showPaginationButtons = !state.showPaginationButtons;
-        }
+        },
+        
     }
 })
 
 export const {showLoginForm,toggleSidebar,
-     toggleShowAddCourseForm,togglePaginationButtons } = UiInteractionSlice.actions;
+     toggleShowAddCourseForm,togglePaginationButtons,toggleShowAddLectureForm } = UiInteractionSlice.actions;
 export default UiInteractionSlice.reducer;

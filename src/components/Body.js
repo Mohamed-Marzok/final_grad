@@ -2,11 +2,11 @@ import { createBrowserRouter,RouterProvider } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Login";
 import InstructorUI from "./instructor/InstructorUI";
-import Header from "./Header";
 import Courses from "./instructor/Courses";
 import CreateQuiz from "../quiz/CreateQuiz";
 import Quiz from "../quiz/Quiz";
-import CreateAssignment from "./assignments/CreateAssignment";
+import CoursePage from "./instructor/CoursePage";
+import Lecture from "./instructor/Lecture";
 
 
 const Body = () =>{
@@ -39,9 +39,14 @@ const Body = () =>{
             element: <Quiz />
         },
         {
-            path: '/assignment',
-            element: <CreateAssignment />
+            path: '/coursepage',
+            element: <CoursePage />
         },
+        {
+            path: '/lectures',
+            element: <Lecture />
+        },
+        
     ]);
     return(
         <div>
