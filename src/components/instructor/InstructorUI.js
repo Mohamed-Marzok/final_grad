@@ -6,6 +6,7 @@ import Hero from '../Hero';
 import Content from '../Content';
 import Footer from '../Footer';
 import ContentView from './ContentView';
+import { Outlet } from 'react-router';
 
 const InstructorUI = () => {
   return (
@@ -14,7 +15,7 @@ const InstructorUI = () => {
       <div className="flex flex-1">
         <Sidebar />
         <div className="flex-1">
-         <ContentView />
+         <Outlet />
         </div>
       </div>
       <Footer />

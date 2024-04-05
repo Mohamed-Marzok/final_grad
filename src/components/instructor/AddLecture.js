@@ -3,35 +3,37 @@ import { useDispatch } from 'react-redux';
 import { addLecture } from '../../redux/addLectureSlice';
 import { toggleShowAddLectureForm } from '../../redux/UiInteractionSlice';
 
-const AddLecture = () => {
+const AddLecture = ({id}) => {
     const nameRef = useRef(null);
     const fileRef = useRef(null);
     const dispatch = useDispatch();
 
-    const handleAddLecture = (e) => {
+    const handleAddLecture = async (e) => {
         e.preventDefault();
         
-        const file = fileRef.current.files[0];
-        console.log(file , file.name);
-        const reader = new FileReader();
-        reader.onload = () => {
-            const lectureInfo = {
-                name: file.name, 
-                file: reader.result,
-            };
-            dispatch(addLecture(lectureInfo));
-        };
-        reader.readAsDataURL(file);
-        
-        if (nameRef.current) { 
-            nameRef.current.value = '';
+        const lectureInfo = new FormData();
+        lectureInfo.append('name', nameRef.current.value);
+        lectureInfo.append('file', fileRef.current.files[0]);
+
+        try {
+            const response = await fetch(`https://academix.runasp.net/api/Lectures/${id}`, {
+                method: 'POST',
+                body: lectureInfo,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add lecture');
+            }
+
+            const data = await response.json();
+            console.log(data); 
+        } catch (error) {
+            console.error('Error adding lecture:', error);
         }
+        nameRef.current.value = '';
         fileRef.current.value = '';
-        
-        // Close the form
         dispatch(toggleShowAddLectureForm());
-    };
-    
+    };    
     return (
         <div className='flex justify-center items-center h-full'>
             <div className='max-w-lg w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative'>

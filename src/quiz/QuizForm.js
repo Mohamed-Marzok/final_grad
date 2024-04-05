@@ -1,31 +1,36 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addQuiz } from '../redux/quizSlice';
-import {togglePaginationButtons} from '../redux/UiInteractionSlice'
+import { togglePaginationButtons } from '../redux/UiInteractionSlice';
 import QuestionInput from './QuestionInput';
 import NavigationButtons from './NavigationButtons';
 import SubmitButton from './SubmitButton';
+import { createExam_API } from '../utils/constants';
 
 const QuizForm = () => {
-    const [numberOfQuestions,setNumberOfQuestions] = useState(0);
+    const [numberOfQuestions, setNumberOfQuestions] = useState(0);
+    const [totalPoints,setTotalPoints] = useState(0);
     const [questions, setQuestions] = useState([]);
-    const [currentPage, setCurrentPage] = useState(0); // Initialize currentPage to 0
-    const quizName = useRef('f'); 
-    const quizDescription = useRef('f'); 
-    const quizInstructions = useRef('f'); 
+    const [currentPage, setCurrentPage] = useState(0);
+    const [name, setName] = useState('');
+    const [instructions, setInstructions] = useState('');
+    const [description, setDescription] = useState('');
+    
     const dispatch = useDispatch();
     const [Head, setHead] = useState(true);
-
+   
     const handleNumQuestionsChange = (e) => {
         console.log(numberOfQuestions)
         if (!isNaN(numberOfQuestions) && numberOfQuestions >= 0) {
             setQuestions(Array(numberOfQuestions).fill().map(() => ({
-                type: 'mcq', 
+                type: 'mcq',
                 question: '',
                 choices: ['', '', '', ''],
-                correctAnswer: 0,
-                selectedAnswers: [], 
-                answer: '',
+                correctAnswer: '0',
+                points: 1,
+                explanaition:'none',
+                selectedAnswers: [],
+                // answer: '',
             })));
         } else {
             setQuestions([]);
@@ -33,48 +38,78 @@ const QuizForm = () => {
         setHead(false);
         dispatch(togglePaginationButtons());
     };
-    const quizInfo = {
-        quizName: quizName.current,
-        quizInstructions: quizInstructions.current,
-        quizDescription: quizDescription.current,
-    }
-    const handleSubmit = (e) => {
+    
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('hi')
+        const quizInfo = {
+            tittle: name,
+            describtion: description,
+            instructions: instructions,
+            time: "2 hours",
+            grades: 2,
+            numOfQuestions: numberOfQuestions,
+            endDate: "12/10/2024"
+                        
+        };
+        const response = await fetch(createExam_API, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(quizInfo),
+        });
+        const examData = await response.json();
         
-        dispatch(addQuiz([quizInfo,...questions]));
+        const questionData = await fetch('https://academix.runasp.net/api/Questions/1',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(questions),
+        });
+        const examQuestions = await questionData.json();
+        console.log(examQuestions);
+        console.log(questions,'gf');
+        setName('');
+        setDescription('');
+        setInstructions('');
+        setTotalPoints(0);
+        setNumberOfQuestions(0);
         setQuestions([]);
+        setCurrentPage(0);
+        console.log(examData , 'formdata');
+
     };
+
 
     return (
         <>
             <div className="create-quiz mx-auto p-8 bg-white rounded-md">
-                {/* <h2 className="text-2xl font-semibold mb-4">Create Quiz</h2> */}
                 {Head && 
                 <form onSubmit={handleSubmit}>
                     <div className=''>
                         <label className='font-bold'>Name</label>
                         <input 
-                        ref={quizName} 
+                        onChange={(e)=>{setName(e.target.value)}}  
                         type='text' 
                         placeholder='Exam Name' 
-                        onChange={(e)=>{quizName.current = (e.target.value)}}
                         className="mb-4 h-10 w-1/4 p-2 block rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-blue-200"
                     />
                     <label className='font-bold'>Descriptione</label>
                     <input 
-                        ref={quizDescription} 
+                        onChange={(e)=>{setDescription(e.target.value)}} 
                         type='text' 
                         placeholder='Exam Description' 
-                        onChange={(e)=>{quizDescription.current = (e.target.value)}}
                         className="mb-4 h-16 p-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-blue-200"
                     />
                     <label className='font-bold'>Instructions</label>
                     <input 
-                        ref={quizInstructions} 
                         type='text' 
                         placeholder='Exam Instructions' 
-                        onChange={(e)=>{quizInstructions.current = (e.target.value)}}
                         className="mb-4 h-16 p-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-blue-200"
+                        onChange={(e)=>{setInstructions(e.target.value)}} 
                     />
                     <label className='font-bold'>Date</label>
                     <input 
@@ -98,6 +133,7 @@ const QuizForm = () => {
                             type='number' 
                             placeholder='Total Points' 
                             className="mr-2 w-1/2 p-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-blue-200"
+                            onChange={(e)=>{setTotalPoints(parseInt(e.target.value))}}
                         />
                         </div>
                       <div className=''>

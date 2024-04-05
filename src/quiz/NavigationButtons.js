@@ -13,9 +13,7 @@ const NavigationButtons = ({ currentPage, setCurrentPage, numberOfQuestions }) =
     console.log("Math.ceil(numberOfQuestions / 5):", Math.ceil(numberOfQuestions / 5));
 
     useEffect(() => {
-        console.log("currentPage:", currentPage);
-        console.log("numberOfQuestions:", numberOfQuestions);
-        console.log("Math.ceil(numberOfQuestions / 5):", Math.ceil(numberOfQuestions / 5));
+       
     }, [currentPage, numberOfQuestions]);
 
     return (

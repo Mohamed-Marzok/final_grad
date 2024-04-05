@@ -8,10 +8,12 @@ const Sidebar = () => {
   return(isSidebarOpen? (
     <div className=' h-screen border-r-2 mr-8'>
        <ul className='m-2 p-2'>
+       <Link to={'/instructor/courses'}>
        <li className='p-2 m-4 hover:bg-[#f2f2f2] rounded-md flex flex-col items-center'>
             <div className="text-2xl mb-2">🧑‍🎓</div>
             <div className="text-sm">Courses</div>
       </li> 
+       </Link>
         <li className='p-2 m-4 flex flex-col items-center hover:bg-[#f2f2f2] rounded-md'>
           <div className='text-2xl mb-2'>📄</div>
           <div className="text-sm">Exams</div>
@@ -20,7 +22,7 @@ const Sidebar = () => {
           <div className='text-2xl mb-2'>📜</div>
           <div className="text-sm">Assignments</div>
         </li> 
-        <Link to={'/lectures'}>
+        <Link to={'/instructor/lectures'}>
         <li className='p-2 m-4 flex flex-col items-center hover:bg-[#f2f2f2] rounded-md'>
           <div className='text-2xl mb-2'>📁</div>
           <div className="text-sm">Lecture</div>

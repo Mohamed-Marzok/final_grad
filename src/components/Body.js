@@ -7,6 +7,10 @@ import CreateQuiz from "../quiz/CreateQuiz";
 import Quiz from "../quiz/Quiz";
 import CoursePage from "./instructor/CoursePage";
 import Lecture from "./instructor/Lecture";
+import StudentUI from "./student/StudentUI";
+import Exams from "./student/Exams";
+import ContentView from "./instructor/ContentView";
+import Demo from "./demo";
 
 
 const Body = () =>{
@@ -24,11 +28,43 @@ const Body = () =>{
         },
         {
             path: '/instructor',
-            element: <InstructorUI />
+            element: <InstructorUI />,
+            children: [
+                {
+                    path: '/instructor',
+                    element: <ContentView />
+                },
+                {
+                    path: 'courses',
+                    element: <Courses />
+                },
+                {
+                    path: 'lectures',
+                    element: <Lecture />
+                },
+                {
+                    path: 'coursepage/:id',
+                    element: <CoursePage />
+                }
+            ]
         },
         {
-            path: '/courses',
-            element: <Courses />
+            path: '/student',
+            element: <StudentUI />,
+            children: [
+                {
+                    path: 'mycourses',
+                    element: <Courses />,
+                },
+                {
+                    path: 'exams',
+                    element: <Exams />,
+                },
+            ]
+        },
+        {
+            path:'/demo',
+            element: <Demo/>
         },
         {
             path: '/createquiz',

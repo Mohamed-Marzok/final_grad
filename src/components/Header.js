@@ -34,7 +34,9 @@ const Header = () => {
                 </ul>
             </div>
             <div className="flex col-span-1 justify-center">
-                <button onClick={handleClick} className="bg-[#18a9ea] text-white m-2 p-3 w-28 rounded-md">Login</button>
+                <button onClick={handleClick} className="bg-[#18a9ea] text-white m-2 p-3 w-28 rounded-md">
+                    {location.pathname === '/' ? 'Login' : 'LogOut'}
+                    </button>
             </div>
         </div>
     );

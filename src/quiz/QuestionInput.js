@@ -24,14 +24,14 @@ const QuestionInput = ({ questions, setQuestions, currentPage }) => {
     };
     const handleCorrectAnswerChange = (choiceIndex, questionIndex) => {
         const newQuestions = [...questions];
-        newQuestions[questionIndex].correctAnswer = choiceIndex;
+        newQuestions[questionIndex].correctAnswer = choiceIndex.toString();
         setQuestions(newQuestions);
     };
     const handleSelectedAnswerChange = (e, questionIndex, choiceIndex) => {
         const newQuestions = [...questions];
         const selectedAnswers = newQuestions[questionIndex].selectedAnswers;
         if (e.target.checked) {
-            selectedAnswers.push(choiceIndex);
+            selectedAnswers.push(choiceIndex.toString());
         } else {
             const index = selectedAnswers.indexOf(choiceIndex);
             if (index !== -1) {
@@ -94,7 +94,7 @@ const QuestionInput = ({ questions, setQuestions, currentPage }) => {
                                             <input
                                                 type="radio"
                                                 name={`choice-${choiceIndex}`}
-                                                checked={question.correctAnswer === choiceIndex}
+                                                checked={question.correctAnswer === choiceIndex.toString()}
                                                 onChange={(e) => handleCorrectAnswerChange(choiceIndex, index)}
                                                 className="mr-2"
                                             />
@@ -125,7 +125,7 @@ const QuestionInput = ({ questions, setQuestions, currentPage }) => {
                                 <div key={choiceIndex} className="flex items-center mt-1">
                                     <input
                                         type="checkbox"
-                                        checked={question.selectedAnswers.includes(choiceIndex)}
+                                        checked={question.selectedAnswers.includes(choiceIndex.toString())}
                                         onChange={(e) => handleSelectedAnswerChange(e, index + currentPage * 5, choiceIndex)}
                                         className="mr-2"
                                     />

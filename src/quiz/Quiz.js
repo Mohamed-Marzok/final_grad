@@ -1,17 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/instructor/Sidebar';
 import Footer from '../components/Footer';
-import { useSelector } from 'react-redux';
 
 const QuestionsPerPage = 5;
 
 const Quiz = () => {
-  const quizData = useSelector((state) => state.quiz);
+  console.log('Component rendered');
+
+  const [quizData, setQuizData] = useState([]);
+  // const [quiz , setQuiz] = useState([]);
+  const [questions , setQuestions] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [userAnswers, setUserAnswers] = useState(Array(quizData.length - 1).fill(null));
+  const [userAnswers, setUserAnswers] = useState([]); 
   const [showResult, setShowResult] = useState(false);
 
+  useEffect(()=>{
+    const fetchQuizDataAndQuestions = async () => {
+        try {
+          await fetchQuizData();
+          await fetchQuizQuestions();
+          // setQuizData([info, ...questions]);
+        } catch (error) {
+          console.error('Error fetching quiz data and questions:', error);
+        }
+      };
+  
+      fetchQuizDataAndQuestions();
+},[])
+console.log(quizData,'quiz')
+const fetchQuizData = async () => {
+    try {
+      const response = await fetch('https://academix.runasp.net/api/Exams/GetExam?id=1');
+      if (!response.ok) {
+        throw new Error('Failed to fetch quiz data');
+      }
+      const data = await response.json();
+      setQuizData(data);
+      console.log('Fetched quiz data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching quiz data:', error);
+    }
+  };
+  const fetchQuizQuestions = async () => {
+    try {
+      const response = await fetch('https://academix.runasp.net/api/Exams/GetExamQuestion?id=1');
+      if (!response.ok) {
+        throw new Error('Failed to fetch questions');
+      }
+      const questionsData = await response.json();
+      console.log('Fetched questions:', questionsData);
+      setQuestions(questionsData);
+      return questionsData;
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+      return [];
+    }
+  };
+  
+
+ 
   const handleUserAnswer = (index, value) => {
     if (!showResult) {
       const updatedUserAnswers = [...userAnswers];
@@ -37,9 +86,9 @@ const Quiz = () => {
 
   const calculateScore = () => {
     let score = 0;
-    for (let i = 1; i < quizData.length; i++) {
-      const question = quizData[i];
-      const answer = userAnswers[i - 1];
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      const answer = userAnswers[i];
       if (question.type === 'mcq' && answer === question.correctAnswer) {
         score++;
       } else if (question.type === 'multiple' && arraysEqual(answer, question.selectedAnswers)) {
@@ -73,45 +122,54 @@ const Quiz = () => {
     e.preventDefault();
     setShowResult(true);
   };
-  console.log(quizData[0]);
   const renderQuestions = () => {
+    if (!quizData || quizData.length === 0) {
+      return <p>loading...</p>; 
+    }
     const startIndex = currentPage * QuestionsPerPage + 1;
     const endIndex = Math.min(startIndex + QuestionsPerPage, quizData.length);
-  
-    return quizData.slice(startIndex, endIndex).map((question, index) => (
+    
+    console.log(questions,'hj')
+    return questions.map((question, index) => (
       <div key={index} className="question p-4 border-2 my-4 border-gray-200">
         <label className='text-lg font-bold p-2'>Question {index+1}</label>
-        <p className="font-bold m-2 text-center">{question.question}</p>
+        <p className="font-bold m-2 text-center">{question.text}</p>
         <div className="choices grid grid-cols-2 gap-4 my-2">
-          {question.choices.map((choice, choiceIndex) => (
-            <div key={choiceIndex} className="choice my-2 flex justify-center items-center mb-2">
-              {question.type === "mcq" ? (
-                <label className="cursor-pointer">
-                  <input
-                    type="radio"
-                    value={choiceIndex}
-                    checked={userAnswers[startIndex + index - 1] === choiceIndex}
-                    onChange={() => handleUserAnswer(startIndex + index - 1, choiceIndex)}
-                    disabled={showResult}
-                    className="mr-2"
-                  />
-                  {choice}
-                </label>
-              ) : (
-                <label className="cursor-pointer">
-                  <input
-                    type="checkbox"
-                    value={choiceIndex}
-                    checked={userAnswers[startIndex + index - 1] && userAnswers[startIndex + index - 1].includes(choiceIndex)}
-                    onChange={(e) => handleUserMultipleAnswers(startIndex + index - 1, choiceIndex, e.target.checked)}
-                    disabled={showResult}
-                    className="mr-2"
-                  />
-                  {choice}
-                </label>
-              )}
-            </div>
-          ))}
+        {question.options.split('-').map((option, optionIndex) => {
+  const trimmedOption = option.trim();
+  if (trimmedOption) {
+    return (
+      <div key={optionIndex} className="choice my-2 flex justify-center items-center mb-2">
+        {question.type === "mcq" ? (
+          <label className="cursor-pointer">
+            <input
+              type="radio"
+              value={optionIndex}
+              checked={userAnswers[startIndex + index - 1] === optionIndex}
+              onChange={() => handleUserAnswer(startIndex + index - 1, optionIndex)}
+              disabled={showResult}
+              className="mr-2"
+            />
+            {`- ${trimmedOption}`}
+          </label>
+        ) : (
+          <label className="cursor-pointer">
+            <input
+              type="checkbox"
+              value={optionIndex}
+              checked={userAnswers[startIndex + index - 1] && userAnswers[startIndex + index - 1].includes(optionIndex)}
+              onChange={(e) => handleUserMultipleAnswers(startIndex + index - 1, optionIndex, e.target.checked)}
+              disabled={showResult}
+              className="mr-2"
+            />
+            {`- ${trimmedOption}`}
+          </label>
+        )}
+      </div>
+    );
+  }
+})}
+
         </div>
       </div>
     ));
@@ -129,29 +187,27 @@ const Quiz = () => {
             <div className="mb-4 flex justify-between items-center">
             
             <table className="text-[#fa5757] font-bold mb-4 border-2 w-full">
-      <tbody>
+      {quizData && <tbody>
         <tr>
           <td className="w-3/4 border-r-2">
             <table>
               <tbody>
                 <tr className=''>
-                  <td className=" pr-4">Name: {quizData[0].quizName}</td>
+                  <td className=" pr-4">Name: {quizData.tittle}</td>
                 </tr>
                 <tr className=''>
-                  <td className=" pr-4">Description: {quizData[0].quizDescription}</td>
+                  <td className=" pr-4">Description: {quizData.describtion}</td>
                 </tr>
                 <tr className=''>
-                  <td className=" pr-4">Instruction: {quizData[0].quizInstructions}</td>
+                  <td className=" pr-4">Instruction: {quizData.instructions}</td>
                 </tr>
                 <div className='w-full'></div>
                 <tr className=''>
-                  <td className=" pr-4">Total Questions: {quizData.length - 1}</td>
+                  <td className=" pr-4">Total Questions: {questions.length }</td>
                 </tr>
-                {/* </div> */}
-                {/* You may need to calculate the total points based on quizData */}
+                
                 <tr>
-                  <td className=" pr-4">Total Points:</td>
-                  <td>{/* Calculate total points */}</td>
+                  <td className=" pr-4">Total Points:{quizData.grades}</td>
                 </tr>
               </tbody>
             </table>
@@ -160,7 +216,7 @@ const Quiz = () => {
             <h2 className='text-center'>Time</h2>
           </td>
         </tr>
-      </tbody>
+      </tbody> }
     </table>
             </div>
             <form onSubmit={handleSubmit}>
@@ -172,7 +228,7 @@ const Quiz = () => {
                 <button type="button" onClick={handleNext} disabled={currentPage === Math.ceil((quizData.length - 1) / QuestionsPerPage) - 1 || showResult} className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md focus:outline-none">
                   Next
                 </button>
-                {!showResult && currentPage === Math.ceil((quizData.length - 1) / QuestionsPerPage) - 1 && (
+                {(
                   <button type="submit" className="bg-[#fa5757] text-white px-4 py-2 rounded-md hover:bg-[#eb5252] focus:outline-none">
                     Submit Quiz
                   </button>
@@ -181,7 +237,7 @@ const Quiz = () => {
             </form>
             {showResult && (
               <div className="result mt-4">
-                <h3>Your Score: {calculateScore()} / {quizData.length - 1}</h3>
+                <h3>Your Score: {calculateScore()} / {quizData.grades}</h3>
               </div>
             )}
           </div>
