@@ -2,7 +2,8 @@ import { useRef, useState } from "react";
 import validation from '../utils/formValidation';
 import { useLocation, useNavigate } from "react-router";
 import { login_API, register_API } from "../utils/constants";
-
+import { useDispatch } from "react-redux";
+import { addUser,removeUser } from "../redux/userSlice";
 const Login = () =>{
     const [message, setMessage] = useState(null); 
     const [isLogin, setIsLogin] = useState(true);
@@ -14,6 +15,7 @@ const Login = () =>{
     const confirmPassword = useRef(null);
     const userType = useRef(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const toggleForm = () => {
         setIsLogin(!isLogin);
@@ -44,14 +46,18 @@ const Login = () =>{
                 
 
                 const data = await response.json();
-
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('role', data.roles[0]);
+                console.log(data,'user Data');
+                console.log(data.result.roles.$values[0] , 'role')
+                // console.log(data.roles.$values[0] , 'values');
+                dispatch(addUser(data));
+                localStorage.setItem('token', data.result.token);
+                localStorage.setItem('role', data.result.roles.$values[0]);
+                localStorage.setItem('userEmail', data.result.email);
     
-                if (data.roles[0] === 'Instructor') {
+                if (data.result.roles.$values[0] === 'Instructor') {
                     navigate('/instructor')
-                } else if (data.roles[0] === 'Student') {
-                    window.location.href = '/student';
+                } else if (data.result.roles.$values[0]  === 'Student') {
+                    navigate('/student');
                 }
                 console.log(data);
             } catch (error) {

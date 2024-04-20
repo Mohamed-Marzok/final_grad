@@ -3,14 +3,26 @@ import React from 'react';
 const LectureCard = ({ lecture }) => {
     console.log(lecture.endDate)
     if(!lecture) return;
-    const { name, file } = lecture;
+    const { name, lecFile,file } = lecture;
     
     const handleDownload = () => {
+        const byteCharacters = lecture.lecFile? atob(lecFile) : atob(file);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+    
         const anchor = document.createElement('a');
-        anchor.href = file; // Assuming file.url contains the file URL
-        anchor.download = name; // Set the downloaded file name
-        anchor.click(); // Trigger click event to initiate download
+        anchor.href = url;
+        anchor.download = name+'.pdf';
+        anchor.click();
+    
+        URL.revokeObjectURL(url);
     };
+    
 
     return (
         <div className='w-80 rounded-xl overflow-hidden shadow-md m-4 bg-white hover:shadow-lg cursor-pointer'>

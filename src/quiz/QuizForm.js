@@ -27,7 +27,7 @@ const QuizForm = () => {
                 question: '',
                 choices: ['', '', '', ''],
                 correctAnswer: '0',
-                points: 1,
+                points: 2,
                 explanaition:'none',
                 selectedAnswers: [],
                 // answer: '',
@@ -50,10 +50,10 @@ const QuizForm = () => {
             time: "2 hours",
             grades: 2,
             numOfQuestions: numberOfQuestions,
-            endDate: "12/10/2024"
+            endDate: "12/10/2024",
                         
         };
-        const response = await fetch(createExam_API, {
+        const response = await fetch('https://academix.runasp.net/api/Exams/CreateExam/23', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,8 +61,10 @@ const QuizForm = () => {
             body: JSON.stringify(quizInfo),
         });
         const examData = await response.json();
-        
-        const questionData = await fetch('https://academix.runasp.net/api/Questions/1',{
+        const {id} = examData.exam;
+        console.log(id);
+        setTimeout(async() => {
+            const questionData = await fetch(`https://academix.runasp.net/api/Questions/${id}`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -72,6 +74,7 @@ const QuizForm = () => {
         const examQuestions = await questionData.json();
         console.log(examQuestions);
         console.log(questions,'gf');
+        }, 5000);
         setName('');
         setDescription('');
         setInstructions('');

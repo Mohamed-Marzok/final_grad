@@ -1,12 +1,13 @@
 import {useState} from 'react';
 import { useDispatch } from "react-redux";
 import { navLogo } from "../utils/constants";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { showLoginForm, toggleSidebar } from "../redux/UiInteractionSlice";
 import { hamburgerMenuIcon } from "../utils/constants";
 
 const Header = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const isHome = location.pathname === '/';
     const [showHamburgerMenu , setShowHamburgerMenu] = useState(!isHome)
     const dispatch = useDispatch();
@@ -14,7 +15,12 @@ const Header = () => {
         dispatch(toggleSidebar())
     }
     const handleClick = () => {
-        dispatch(showLoginForm());
+        if(location.pathname ==='/'){
+            navigate('/login');
+        }else{
+            localStorage.clear();
+            navigate('/login')
+        }
     };
 
 

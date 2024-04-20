@@ -5,9 +5,9 @@ import Footer from '../components/Footer';
 
 const QuestionsPerPage = 5;
 
-const Quiz = () => {
+const Quiz = ({id}) => {
   console.log('Component rendered');
-
+  
   const [quizData, setQuizData] = useState([]);
   // const [quiz , setQuiz] = useState([]);
   const [questions , setQuestions] = useState([]);
@@ -19,8 +19,6 @@ const Quiz = () => {
     const fetchQuizDataAndQuestions = async () => {
         try {
           await fetchQuizData();
-          await fetchQuizQuestions();
-          // setQuizData([info, ...questions]);
         } catch (error) {
           console.error('Error fetching quiz data and questions:', error);
         }
@@ -31,31 +29,17 @@ const Quiz = () => {
 console.log(quizData,'quiz')
 const fetchQuizData = async () => {
     try {
-      const response = await fetch('https://academix.runasp.net/api/Exams/GetExam?id=1');
+      const response = await fetch(`https://academix.runasp.net/api/Exams/GetExam/65`);
       if (!response.ok) {
         throw new Error('Failed to fetch quiz data');
       }
       const data = await response.json();
       setQuizData(data);
+      setQuestions(data.questions.$values)
       console.log('Fetched quiz data:', data);
       return data;
     } catch (error) {
       console.error('Error fetching quiz data:', error);
-    }
-  };
-  const fetchQuizQuestions = async () => {
-    try {
-      const response = await fetch('https://academix.runasp.net/api/Exams/GetExamQuestion?id=1');
-      if (!response.ok) {
-        throw new Error('Failed to fetch questions');
-      }
-      const questionsData = await response.json();
-      console.log('Fetched questions:', questionsData);
-      setQuestions(questionsData);
-      return questionsData;
-    } catch (error) {
-      console.error('Error fetching questions:', error);
-      return [];
     }
   };
   
@@ -64,7 +48,7 @@ const fetchQuizData = async () => {
   const handleUserAnswer = (index, value) => {
     if (!showResult) {
       const updatedUserAnswers = [...userAnswers];
-      updatedUserAnswers[index] = value;
+      updatedUserAnswers[index] = value ;
       setUserAnswers(updatedUserAnswers);
     }
   };
@@ -86,12 +70,15 @@ const fetchQuizData = async () => {
 
   const calculateScore = () => {
     let score = 0;
+    console.log(questions , 're')
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
       const answer = userAnswers[i];
-      if (question.type === 'mcq' && answer === question.correctAnswer) {
+      if (question.type === 'mcq' && (answer-1) === Number(question.correctAnswer)) {
+        console.log('mcq');
         score++;
-      } else if (question.type === 'multiple' && arraysEqual(answer, question.selectedAnswers)) {
+      } 
+      else if (question.type === 'multiple answers' && answer &&arraysEqual(answer, question.correctAnswer.split('/').filter(answer => answer.trim() !== "").reverse())) {
         score++;
       }
     }
@@ -99,9 +86,10 @@ const fetchQuizData = async () => {
   };
 
   const arraysEqual = (arr1, arr2) => {
+    console.log(arr1 , arr2);
     if (arr1.length !== arr2.length) return false;
     for (let i = 0; i < arr1.length; i++) {
-      if (arr1[i] !== arr2[i]) return false;
+      if (arr1[i] - 1 !== Number(arr2[i])) return false;
     }
     return true;
   };
@@ -117,7 +105,7 @@ const fetchQuizData = async () => {
       setCurrentPage(currentPage - 1);
     }
   };
-
+  console.log(userAnswers , 'user answers');
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowResult(true);
@@ -129,13 +117,14 @@ const fetchQuizData = async () => {
     const startIndex = currentPage * QuestionsPerPage + 1;
     const endIndex = Math.min(startIndex + QuestionsPerPage, quizData.length);
     
-    console.log(questions,'hj')
-    return questions.map((question, index) => (
+    console.log(quizData?.$values,'hj')
+    return quizData?.questions.$values?.map((question, index) => (
+      
       <div key={index} className="question p-4 border-2 my-4 border-gray-200">
         <label className='text-lg font-bold p-2'>Question {index+1}</label>
         <p className="font-bold m-2 text-center">{question.text}</p>
         <div className="choices grid grid-cols-2 gap-4 my-2">
-        {question.options.split('-').map((option, optionIndex) => {
+        {question.options.split('/').map((option, optionIndex) => {
   const trimmedOption = option.trim();
   if (trimmedOption) {
     return (
@@ -150,7 +139,7 @@ const fetchQuizData = async () => {
               disabled={showResult}
               className="mr-2"
             />
-            {`- ${trimmedOption}`}
+            {trimmedOption}
           </label>
         ) : (
           <label className="cursor-pointer">
@@ -162,7 +151,7 @@ const fetchQuizData = async () => {
               disabled={showResult}
               className="mr-2"
             />
-            {`- ${trimmedOption}`}
+             {trimmedOption}
           </label>
         )}
       </div>
@@ -235,9 +224,9 @@ const fetchQuizData = async () => {
                 )}
               </div>
             </form>
-            {showResult && (
+            { (
               <div className="result mt-4">
-                <h3>Your Score: {calculateScore()} / {quizData.grades}</h3>
+                { showResult && <h3>Your Score: { `${calculateScore()} / ${quizData.grades}`}</h3>}
               </div>
             )}
           </div>

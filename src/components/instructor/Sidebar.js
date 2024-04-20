@@ -5,10 +5,13 @@ import { Link } from 'react-router-dom';
 const Sidebar = () => {
 
   const isSidebarOpen = useSelector(store => store.UiInteraction.isSidebarOpen);
+  const pathName = window.location.pathname;
+    const segments = pathName.split('/');
+    const user = segments.includes('student')? 'student' : 'instructor';
   return(isSidebarOpen? (
     <div className=' h-screen border-r-2 mr-8'>
        <ul className='m-2 p-2'>
-       <Link to={'/instructor/courses'}>
+       <Link to={'/'+user+'/courses'}>
        <li className='p-2 m-4 hover:bg-[#f2f2f2] rounded-md flex flex-col items-center'>
             <div className="text-2xl mb-2">🧑‍🎓</div>
             <div className="text-sm">Courses</div>
@@ -22,7 +25,7 @@ const Sidebar = () => {
           <div className='text-2xl mb-2'>📜</div>
           <div className="text-sm">Assignments</div>
         </li> 
-        <Link to={'/instructor/lectures'}>
+        <Link to={'/'+user+'/lectures'}>
         <li className='p-2 m-4 flex flex-col items-center hover:bg-[#f2f2f2] rounded-md'>
           <div className='text-2xl mb-2'>📁</div>
           <div className="text-sm">Lecture</div>

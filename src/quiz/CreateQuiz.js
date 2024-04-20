@@ -23,36 +23,14 @@ const CreateQuiz = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // setQuestions([
-        //     {
-        //         type: "mcq",
-        //        text: "2+2",
-        //         options: [
-        //           '1','2','3','4'
-        //         ],
-        //         correctAnswer: "4",
-        //         points: 1,
-        //         explanaition: "2+2 = 4"
-        //       }
-        // ])
-        // const response = await fetch(createExam_API, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(questions),
-        // });
-        // const questions = await response.json();
-        // console.log(questions);        
-        // setQuestions([]);
     };
 
     return (
         <div className='flex flex-col min-h-screen'>
-            <Header />
+            
             <form onSubmit={handleSubmit}> {/* Form element */}
                 <div className='flex flex-1 justify-center items-center'>
-                    <Sidebar />
+                    
                     <div className='w-2/4 h-screen  m-auto relative overflow-y-auto flex justify-center items-center'>
                         <div className="create-quiz m-auto w-3/4 p-8 bg-white border-2 rounded-md">
                             <h2 className="text-2xl text-center font-semibold mb-4">Create Exam</h2>
@@ -72,12 +50,11 @@ const CreateQuiz = () => {
                                 setCurrentPage={setCurrentPage}
                             />}
                             <SubmitButton /> {/* Moved SubmitButton inside the form */}
-                            <Link to={'/quiz'}><button>solve</button></Link>
                         </div>
                     </div>
                 </div>
             </form>
-            <Footer />
+          
         </div>
     );
 };

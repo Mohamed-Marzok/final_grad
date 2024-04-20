@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCourse } from '../../redux/addCourseSlice';
 import { toggleShowAddCourseForm } from '../../redux/UiInteractionSlice';
 
 const AddCourse = () => {
@@ -8,28 +7,30 @@ const AddCourse = () => {
     const descriptionRef = useRef(null);
     const thumbnailRef = useRef(null);
     const [showCourseId , setShowCourseID] = useState(false);
+    const [courseID , setCourseId] = useState(null);
     const dispatch = useDispatch();
-    let CourseId = '';
+    
+    // let CourseId = null;
     
 
     const handleAddCourse = async(e) => {
         e.preventDefault();
-        const courseInfo = {
-            name: nameRef.current.value,
-            description: descriptionRef.current.value,
-            link: thumbnailRef.current.value,
-        };
+
+        const course = new FormData();
+        course.append('Name', nameRef.current.value);
+        course.append('Email', localStorage.getItem('userEmail'));
+        course.append('Description', descriptionRef.current.value);
+        course.append('photo', thumbnailRef.current.files[0]);
+       
+        console.log(course , 'added course')
+        console.log(nameRef , descriptionRef , 'data');
         const response = await fetch('https://academix.runasp.net/api/Courses/CreateCourse',{
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(courseInfo),
+            body: course,
         });
         const data = await response.json();
         console.log(data);
-        CourseId = data.id;
-        console.log(CourseId);
+        setCourseId(data.id);
         nameRef.current.value = '';
         descriptionRef.current.value = '';
         thumbnailRef.current.value = '';
@@ -67,9 +68,10 @@ const AddCourse = () => {
                         <input
                             ref={thumbnailRef}
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                            id='courseThumbnail'
-                            type='text'
-                            placeholder='Enter course thumbnail URL'
+                            id='lectureFile'
+                            type='file'
+                            accept='.pdf, .doc, .docx, .ppt, .pptx,.jpg, .jpeg, .png'
+                            required
                         />
                     </div>
                     <div className='flex justify-center'>
@@ -82,7 +84,7 @@ const AddCourse = () => {
                         </button>
                     </div>
                 </form>}
-                {showCourseId&&<h1 className='text-center absolute top-[50%] left-[50%]'>{CourseId}</h1>}
+                {showCourseId&&<h1 className='text-center absolute top-[50%] left-[50%]'>Course Code: {courseID}</h1>}
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ const QuestionInput = ({ questions, setQuestions, currentPage }) => {
         const newQuestions = [...questions];
         newQuestions[index].type = e.target.value;
         // Reset choices when type changes
-        if (e.target.value !== 'mcq' && e.target.value !== 'multiple') {
+        if (e.target.value !== 'mcq' && e.target.value !== 'multiple answers') {
             newQuestions[index].choices = [];
         }
         setQuestions(newQuestions);
@@ -64,7 +64,7 @@ const QuestionInput = ({ questions, setQuestions, currentPage }) => {
                         className="w-full border border-gray-300 rounded-md p-2 my-4 focus:outline-none focus:ring focus:ring-blue-200"
                     >
                         <option value="mcq">Multiple Choice</option>
-                        <option value="multiple">Select Multiple Answers</option>
+                        <option value="multiple answers">Select Multiple Answers</option>
                         <option value="write">Write-in Answer</option>
                     </select>
 
@@ -118,7 +118,7 @@ const QuestionInput = ({ questions, setQuestions, currentPage }) => {
                             ))}
                         </>
                     )}
-                    {question.type === 'multiple' && (
+                    {question.type === 'multiple answers' && (
                         <>
                             <label className="block mt-2">Choices:</label>
                             {question.choices.map((choice, choiceIndex) => (

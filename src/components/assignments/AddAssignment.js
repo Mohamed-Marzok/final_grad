@@ -6,20 +6,22 @@ const AddAssignment = ({id}) => {
     const nameRef = useRef(null);
     const descriptionRef = useRef(null);
     const deadLineRef = useRef(null);
+    const gradeRef = useRef(null);
     const fileRef = useRef(null);
     const dispatch = useDispatch();
 
-    const handleAddLecture = async (e) => {
+    const handleAddAssignment = async (e) => {
         e.preventDefault();
         
         const assignmentInfo = new FormData();
-        assignmentInfo.append('name', nameRef.current.value);
-        assignmentInfo.append('description', descriptionRef.current.value);
-        assignmentInfo.append('deadline', deadLineRef.current.value);
-        assignmentInfo.append('file', fileRef.current.files[0]);
+        assignmentInfo.append('Tittle', nameRef.current.value);
+        assignmentInfo.append('Description', descriptionRef.current.value);
+        assignmentInfo.append('Grade',gradeRef.current.value);
+        assignmentInfo.append('EndDate', deadLineRef.current.value);
+        assignmentInfo.append('File', fileRef.current.files[0]);
 
         try {
-            const response = await fetch(`https://academix.runasp.net/api/Assignments/${id}`, {
+            const response = await fetch(`https://academix.runasp.net/api/Asignments/${id}`, {
                 method: 'POST',
                 body: assignmentInfo,
             });
@@ -33,10 +35,12 @@ const AddAssignment = ({id}) => {
         } catch (error) {
             console.error('Error adding assignment:', error);
         }
+        console.log(assignmentInfo);
         nameRef.current.value = '';
         fileRef.current.value = '';
         deadLineRef.current.value = '';
         descriptionRef.current.value = '';
+        gradeRef.current.value = null;
         dispatch(toggleShowAddAssignmentForm());
     };    
     return (
@@ -44,14 +48,14 @@ const AddAssignment = ({id}) => {
             <div className='max-w-lg w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative'>
                 <button className="absolute -top-2 right-0 m-2 text-gray-500 text-3xl" onClick={() => dispatch(toggleShowAddAssignmentForm())}>X</button>
                 <h1 className='text-2xl font-bold mb-6 text-center'>Add Assignment</h1>
-                <form onSubmit={handleAddLecture}>
+                <form onSubmit={handleAddAssignment}>
                     <div className='mb-4'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='lectureName'>Assignment Name</label>
                         <input
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                             id='lectureName'
                             type='text'
-                            placeholder='Enter lecture name'
+                            placeholder='Enter Assignment Name'
                             ref={nameRef}
                             required
                         />
@@ -62,7 +66,7 @@ const AddAssignment = ({id}) => {
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                             id='lectureName'
                             type='text'
-                            placeholder='Enter lecture name'
+                            placeholder='Enter Assignment Description'
                             ref={descriptionRef}
                             required
                         />
@@ -73,8 +77,19 @@ const AddAssignment = ({id}) => {
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                             id='lectureName'
                             type='text'
-                            placeholder='Enter lecture name'
+                            placeholder='Enter Assignment Deadline'
                             ref={deadLineRef}
+                            required
+                        />
+                    </div>
+                    <div className='mb-4'>
+                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='lectureName'>Assignment Name</label>
+                        <input
+                            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                            id='lectureName'
+                            type='number'
+                            placeholder='Enter Assignment Grade'
+                            ref={gradeRef}
                             required
                         />
                     </div>

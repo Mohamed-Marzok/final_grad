@@ -39,12 +39,22 @@ const Body = () =>{
                     element: <Courses />
                 },
                 {
-                    path: 'lectures',
-                    element: <Lecture />
+                    path: 'createquiz',
+                    element: <CreateQuiz />
                 },
                 {
                     path: 'coursepage/:id',
-                    element: <CoursePage />
+                    element: <CoursePage />,
+                    children: [
+                        {
+                            path: 'createquiz',
+                            element: <CreateQuiz />
+                        },
+                        {
+                            path: 'quiz',
+                            element: <Quiz />
+                        }
+                    ]
                 }
             ]
         },
@@ -53,22 +63,22 @@ const Body = () =>{
             element: <StudentUI />,
             children: [
                 {
-                    path: 'mycourses',
+                    path: 'courses',
                     element: <Courses />,
                 },
                 {
                     path: 'exams',
                     element: <Exams />,
                 },
+                {
+                    path: 'coursepage/:id',
+                    element: <CoursePage />
+                }
             ]
         },
         {
             path:'/demo',
             element: <Demo/>
-        },
-        {
-            path: '/createquiz',
-            element: <CreateQuiz />
         },
         {
             path: '/quiz',
