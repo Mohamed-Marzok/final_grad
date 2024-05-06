@@ -47,16 +47,16 @@ const Login = () =>{
 
                 const data = await response.json();
                 console.log(data,'user Data');
-                console.log(data.result.roles.$values[0] , 'role')
+                console.log(data.result.Roles[0] , 'role')
                 // console.log(data.roles.$values[0] , 'values');
                 dispatch(addUser(data));
-                localStorage.setItem('token', data.result.token);
-                localStorage.setItem('role', data.result.roles.$values[0]);
-                localStorage.setItem('userEmail', data.result.email);
+                localStorage.setItem('token', data.result.Token);
+                localStorage.setItem('role', data.result.Roles[0]);
+                localStorage.setItem('userEmail', data.result.Email);
     
-                if (data.result.roles.$values[0] === 'Instructor') {
+                if (data.result.Roles[0] === 'Instructor') {
                     navigate('/instructor')
-                } else if (data.result.roles.$values[0]  === 'Student') {
+                } else if (data.result.Roles[0]  === 'Student') {
                     navigate('/student');
                 }
                 console.log(data);

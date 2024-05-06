@@ -6,6 +6,7 @@ import QuestionInput from './QuestionInput';
 import NavigationButtons from './NavigationButtons';
 import SubmitButton from './SubmitButton';
 import { createExam_API } from '../utils/constants';
+import { useParams } from 'react-router';
 
 const QuizForm = () => {
     const [numberOfQuestions, setNumberOfQuestions] = useState(0);
@@ -15,7 +16,8 @@ const QuizForm = () => {
     const [name, setName] = useState('');
     const [instructions, setInstructions] = useState('');
     const [description, setDescription] = useState('');
-    
+    const {id} = useParams();
+    console.log(id)
     const dispatch = useDispatch();
     const [Head, setHead] = useState(true);
    
@@ -51,41 +53,48 @@ const QuizForm = () => {
             grades: 2,
             numOfQuestions: numberOfQuestions,
             endDate: "12/10/2024",
-                        
         };
-        const response = await fetch('https://academix.runasp.net/api/Exams/CreateExam/23', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(quizInfo),
-        });
-        const examData = await response.json();
-        const {id} = examData.exam;
-        console.log(id);
-        setTimeout(async() => {
-            const questionData = await fetch(`https://academix.runasp.net/api/Questions/${id}`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(questions),
-        });
-        const examQuestions = await questionData.json();
-        console.log(examQuestions);
-        console.log(questions,'gf');
-        }, 5000);
-        setName('');
-        setDescription('');
-        setInstructions('');
-        setTotalPoints(0);
-        setNumberOfQuestions(0);
-        setQuestions([]);
-        setCurrentPage(0);
-        console.log(examData , 'formdata');
-
+    
+        try {
+            const createExamPromise = fetch(`https://academix.runasp.net/api/Exams/CreateExam/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(quizInfo),
+            }).then(response => response.json());
+    
+            const [examData] = await Promise.all([createExamPromise]);
+    
+            const questionsID = examData.exam.Id;
+    
+            const fetchQuestionsPromise = fetch(`https://academix.runasp.net/api/Questions/${questionsID}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(questions),
+            }).then(response => response.json());
+    
+            const examQuestions = await fetchQuestionsPromise;
+    
+            console.log(examQuestions);
+            console.log(questions, 'gf');
+    
+            setName('');
+            setDescription('');
+            setInstructions('');
+            setTotalPoints(0);
+            setNumberOfQuestions(0);
+            setQuestions([]);
+            setCurrentPage(0);
+    
+            console.log(examData, 'formdata');
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
-
+    
 
     return (
         <>

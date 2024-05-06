@@ -11,6 +11,7 @@ import StudentUI from "./student/StudentUI";
 import Exams from "./student/Exams";
 import ContentView from "./instructor/ContentView";
 import Demo from "./demo";
+import StudentModel from "./student/StudentModel";
 
 
 const Body = () =>{
@@ -51,7 +52,7 @@ const Body = () =>{
                             element: <CreateQuiz />
                         },
                         {
-                            path: 'quiz',
+                            path: 'quiz/:examId',
                             element: <Quiz />
                         }
                     ]
@@ -67,23 +68,23 @@ const Body = () =>{
                     element: <Courses />,
                 },
                 {
-                    path: 'exams',
-                    element: <Exams />,
-                },
-                {
                     path: 'coursepage/:id',
                     element: <CoursePage />
                 }
             ]
         },
         {
-            path:'/demo',
+            path:'/demo/:id',
             element: <Demo/>
         },
         {
-            path: '/quiz',
-            element: <Quiz />
+            path:'/studentModel',
+            element: <StudentModel/>
         },
+        {
+            path: '/quiz/:examId',
+            element: <Quiz />
+          },
         {
             path: '/coursepage',
             element: <CoursePage />

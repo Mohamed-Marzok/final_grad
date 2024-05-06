@@ -22,6 +22,7 @@ const CoursePage = () => {
     const dispatch = useDispatch();
     const createQuizSegment = segments.includes('createquiz')? 1:0; 
     const { id } = useParams();
+    console.log(id,'hj')
     const courseData = FetchData('https://academix.runasp.net/api/Courses/', id);
     const lectures = FetchData('https://academix.runasp.net/api/Lectures/GetCourseLectures', id);
     const assignments = FetchData('https://academix.runasp.net/api/Asignments/GetCourseAssignments', id);
@@ -35,23 +36,23 @@ const CoursePage = () => {
             {!showAddAssignmentForm && !showAddLectureForm&& !showAddPostForm && (
                 <div className='w-3/4 h-screen m-auto relative overflow-y-auto'>
                     <div className='flex flex-col justify-center items-center m-4 p-2'>
-                        <h1 className='font-bold'>{courseData.courseName}</h1>
-                        <p>{courseData.description}</p>
-                        <p>Enrollment Code: {courseData.id}</p>
+                        <h1 className='font-bold'>{courseData.CourseName}</h1>
+                        <p>{courseData.Description}</p>
+                        <p>Enrollment Code: {courseData.Id}</p>
                     </div>
                     <div className='flex justify-center items-center'>
                         {lectures &&
-                            lectures.$values.map((lecture) => (
-                                <LectureCard key={lecture.id} lecture={lecture} />
+                            lectures?.map((lecture) => (
+                                <LectureCard key={lecture.Id} lecture={lecture} />
                             ))}
                         {assignments &&
-                            assignments.$values.map((assignment) => (
-                                <LectureCard key={assignment.id} lecture={assignment} />
+                            assignments?.map((assignment) => (
+                                <LectureCard key={assignment.Id} lecture={assignment} />
                             ))}
                     </div>
                     <div className='flex justify-start items-start flex-wrap'>
                         {
-                            exams && exams.$values.map(exam=>(
+                            exams && exams?.map(exam=>(
                                 <ExamCard exam={exam} />
                             ))
                         }
@@ -106,7 +107,7 @@ const CoursePage = () => {
             }
         </div>}
         <div>
-            { <Outlet />}
+            { createQuizSegment && <Outlet />}
         </div>
         </div>
     );

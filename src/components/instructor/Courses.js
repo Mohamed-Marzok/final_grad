@@ -46,7 +46,8 @@ const Courses = () => {
             }
           })
         const userCourses = await response.json();
-        setCourses(userCourses?.user?.userCourses?.$values);
+        console.log(userCourses, 'ress');
+        setCourses(userCourses?.usercourse);
     }
     console.log(courses,'response');
 
@@ -69,12 +70,12 @@ const Courses = () => {
                 >
                     {isCourseFormOpen ? 'Close' : '➕'}
                 </button>}
-                <div className='flex justify-center items-center gap-2'>
-                    <input className='border p-2 ml-2' type='text' placeholder='Course ID' onChange={(e) => setId(e.target.value)} />
+               {localStorage.getItem('role') === 'Student' && <div className='mr-4 flex justify-start items-center gap-2'>
+                    <input className='border p-2' type='text' placeholder='Course ID' onChange={(e) => setId(e.target.value)} />
                     <button className='bg-[#18A9EA] hover:bg-[#4b9cc2] text-white font-bold py-2 px-4' onClick={enrollCourse}>
                         Enroll
                     </button>
-                </div>
+                </div>}
             </div>
         </div>
     );

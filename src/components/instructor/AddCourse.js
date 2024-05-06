@@ -30,7 +30,7 @@ const AddCourse = () => {
         });
         const data = await response.json();
         console.log(data);
-        setCourseId(data.id);
+        setCourseId(data.Id);
         nameRef.current.value = '';
         descriptionRef.current.value = '';
         thumbnailRef.current.value = '';
@@ -42,7 +42,7 @@ const AddCourse = () => {
             <div className='max-w-lg w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative'>
                 <button className="absolute -top-2 right-0 m-2 text-gray-500 text-3xl" onClick={()=>{dispatch(toggleShowAddCourseForm())}}>X</button>
                 <h1 className='text-2xl font-bold mb-6 text-center'>Create Course</h1>
-               {!showCourseId && <form>
+               { <form>
                     <div className='mb-4'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='courseName'>Course Name</label>
                         <input
@@ -84,7 +84,6 @@ const AddCourse = () => {
                         </button>
                     </div>
                 </form>}
-                {showCourseId&&<h1 className='text-center absolute top-[50%] left-[50%]'>Course Code: {courseID}</h1>}
             </div>
         </div>
     );
